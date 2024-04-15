@@ -29,6 +29,20 @@
                     font-size: medium;
                 }
             }
+
+            &.center{
+                align-items: center;
+                justify-content: center;
+                h1{
+                    font-family: "Poppins", sans-serif;
+                    font-weight: 500;
+                    font-size: 40px;
+                    text-align: center;
+                    @media (max-width: 720px) {
+                        font-size: 30px;
+                    }
+                }
+            }
         }
     
         .inputCon{
@@ -48,6 +62,20 @@
                     background: transparent;
                     outline: none;
                     width: 100%;
+                }
+                .voice{
+                    color: #ffffff52;
+                    :hover{
+                        color: #fff;
+                    }
+                }
+                .send{
+                    color: #ffffff52;
+                    &.active{
+                        color: #fff;
+                    }
+                    
+                    
                 }
             }
         }

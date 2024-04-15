@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react'
 import './Chat.scss'
 import axios from 'axios'
 import dotenv from 'dotenv'
+import SendIcon from '@mui/icons-material/Send';
+import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
+import Recorder from 'recorder-js';
+
 
 interface Message {
     tag: string;
@@ -14,7 +18,7 @@ const Chat = () => {
     const [chatData, setChatData] = useState<Message[]>([])
     const [message, setMessage] : any = useState()
     const [loading, setLoading] : any = useState<boolean>(false)
-   
+    
     const options = {
         method: "POST",
         url: "https://api.edenai.run/v2/text/chat",
@@ -67,7 +71,7 @@ const Chat = () => {
   return (
     <div className='chatCon'>
         <div className="chat">
-            <div className="chatbox">
+            <div className={`chatbox ${chatData.length < 1? 'center' : ''}`}>
             {chatData?.map((chat, index)=>(
                 <div className="messageBox" key={index}>
                     <h1> {chat.tag} </h1>
@@ -75,6 +79,14 @@ const Chat = () => {
                     
                 </div>
             ))}
+
+            {chatData.length < 1?
+                
+                <h1>Ask Anything You Want Answers To</h1>
+                :
+                ''
+            }
+
             {loading &&
                 <p>loading....</p>
             }
@@ -89,7 +101,8 @@ const Chat = () => {
                     value={message}
                     onChange={(e)=> setMessage(e.target.value)}
                     />
-                    <button onClick={sendMessage}>Send</button>
+                    <button className='voice' > <KeyboardVoiceIcon /> </button>
+                    <button onClick={()=>message? sendMessage() : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
                 </div>
             </div>
         </div>
