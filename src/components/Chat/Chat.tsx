@@ -1,11 +1,12 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Chat.scss'
 import axios from 'axios'
 import dotenv from 'dotenv'
 import SendIcon from '@mui/icons-material/Send';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import Recorder from 'recorder-js';
+import Recorder, { RecorderResult } from 'recorder-js';
+import { Button, Dialog, DialogActions } from '@mui/material'
 
 
 interface Message {
@@ -18,7 +19,14 @@ const Chat = () => {
     const [chatData, setChatData] = useState<Message[]>([])
     const [message, setMessage] : any = useState()
     const [loading, setLoading] : any = useState<boolean>(false)
-    
+    const [openDialog, setOpenDialog] : any = useState<boolean>(false)
+    const [recording, setRecording] : any = useState<boolean>(false)
+    const [audioRecorder, setAudioRecorder] = useState<Recorder | null>(null);
+    const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
+    const [transcribedText, setTranscribedText] = useState<string>('');
+    // Reference to the media stream to release it later
+    const mediaStreamRef = useRef<MediaStream | null>(null);
+
     const options = {
         method: "POST",
         url: "https://api.edenai.run/v2/text/chat",
@@ -66,7 +74,60 @@ const Chat = () => {
             setLoading(false);
         }
     };
+
+
+    const startRecording = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const audioContext = new (window.AudioContext)();
+          const recorder = new Recorder(audioContext);
     
+          await recorder.init(stream);
+          await recorder.start();
+          setRecording(true)
+
+          // Store the media stream in the ref
+            mediaStreamRef.current = stream;
+    
+          setAudioRecorder(recorder);
+        } catch (error) {
+          console.error('Error accessing microphone:', error);
+        }
+      };
+    
+    
+    
+      const stopRecording = async () => {
+        if (audioRecorder) {
+          await audioRecorder.stop();
+          
+          setRecording(false)
+          // Release the media stream
+            if (mediaStreamRef.current) {
+                mediaStreamRef.current.getTracks().forEach(track => {
+                track.stop();
+                });
+            }
+        }
+      };
+
+      const sendRecording = async () => {
+        if (audioRecorder) {
+          await audioRecorder.stop().then(({blob, buffer})=>{
+            const blobUrl = URL.createObjectURL(blob);
+            console.log(blobUrl)
+            setAudioBlobUrl(blobUrl);
+          });
+          
+          // Release the media stream
+          if (mediaStreamRef.current) {
+            mediaStreamRef.current.getTracks().forEach(track => {
+            track.stop();
+            });
+           }
+          
+        }
+      };
 
   return (
     <div className='chatCon'>
@@ -101,11 +162,22 @@ const Chat = () => {
                     value={message}
                     onChange={(e)=> setMessage(e.target.value)}
                     />
-                    <button className='voice' > <KeyboardVoiceIcon /> </button>
+                    <button className='voice' onClick={()=>{startRecording();setOpenDialog(true)}}> <KeyboardVoiceIcon /> </button>
                     <button onClick={()=>message? sendMessage() : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
                 </div>
             </div>
         </div>
+
+        <Dialog open={openDialog} onClose={()=> setOpenDialog(false)} className='dialog'>
+            <div className="recordingCon" style={{padding: 20, width: '280px'}}>
+                <h1 style={{fontSize: 30}}>Recording....</h1>
+                <button onClick={sendRecording}> <SendIcon/> </button>
+            </div>
+
+            <DialogActions>
+                <Button onClick={()=>{stopRecording(); setOpenDialog(false)}}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
     </div>
   )
 }

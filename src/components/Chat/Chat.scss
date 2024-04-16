@@ -4,7 +4,7 @@
     height: 100%;
     align-items: center;
     justify-content: center;
-   
+    font-family: "Poppins", sans-serif;
     .chat{
         height: 100%;
         width: 50%;
@@ -87,4 +87,14 @@
             }
         }
     }
+
+    
+        .recordingCon{
+            width: 100%;
+            background-color: aqua;
+            h1{
+                font-size: 150px;
+            }
+        }
+
 }
