@@ -17,10 +17,11 @@ interface Message {
 const Chat = () => {
     
     const [chatData, setChatData] = useState<Message[]>([])
-    const [message, setMessage] : any = useState()
-    const [loading, setLoading] : any = useState<boolean>(false)
-    const [openDialog, setOpenDialog] : any = useState<boolean>(false)
-    const [recording, setRecording] : any = useState<boolean>(false)
+    const [message, setMessage]  = useState<any>()
+    const [loading, setLoading] = useState<boolean>(false)
+    const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [recording, setRecording]  = useState<boolean>(false)
+    const [transcribing, settranscribing] = useState<boolean>(false)
     const [audioRecorder, setAudioRecorder] = useState<Recorder | null>(null);
     const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
     const [transcribedText, setTranscribedText] = useState<string>('');
@@ -42,9 +43,12 @@ const Chat = () => {
           max_tokens: 150,
           fallback_providers: "",
         },
-      };
+    };
+
     
-      const sendMessage = async () => {
+    
+    
+    const sendMessage = async () => {
         const newMessage = {
             tag: "You",
             message: message
@@ -109,25 +113,60 @@ const Chat = () => {
                 });
             }
         }
-      };
+    };
 
-      const sendRecording = async () => {
+    const sendRecording = async () => {
         if (audioRecorder) {
-          await audioRecorder.stop().then(({blob, buffer})=>{
-            const blobUrl = URL.createObjectURL(blob);
-            console.log(blobUrl)
-            setAudioBlobUrl(blobUrl);
-          });
-          
-          // Release the media stream
-          if (mediaStreamRef.current) {
-            mediaStreamRef.current.getTracks().forEach(track => {
-            track.stop();
+            await audioRecorder.stop().then(async ({ blob }) => {
+                const blobUrl = URL.createObjectURL(blob);
+                const url = blobUrl.substring(blobUrl.indexOf(':') + 1).trim();
+                
+                console.log(url);
+                setAudioBlobUrl(url); // Update the state with the URL
+                
+                // Release the media stream
+                if (mediaStreamRef.current) {
+                    mediaStreamRef.current.getTracks().forEach(track => {
+                        track.stop();
+                    });
+                }
+                setRecording(false);
+    
+                const formData = new FormData();
+                formData.append("providers", "openai");
+                formData.append('file', blob); // Append the audio blob to FormData
+                formData.append("language", "en");
+    
+                const toTextoptions = {
+                    method: "POST",
+                    url: "https://api.edenai.run/v2/audio/speech_to_text_async",
+                    headers: {
+                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+                        'Content-Type': 'multipart/form-data', // Set content type to multipart form data
+                    },
+                    data: formData, // Pass FormData as the data
+                    params: {
+                        providers: "revai,voci",
+                        language: "en",
+                    },
+                };
+    
+                try {
+                    settranscribing(true);
+                    const res = await axios.request(toTextoptions);
+                    settranscribing(false);
+                    setOpenDialog(false);
+                    console.log(res.data);
+                } catch (error) {
+                    console.log(error);
+                    settranscribing(false);
+                    setOpenDialog(false);
+                }
             });
-           }
-          
         }
-      };
+    };
+    
+    
 
   return (
     <div className='chatCon'>
@@ -170,7 +209,16 @@ const Chat = () => {
 
         <Dialog open={openDialog} onClose={()=> setOpenDialog(false)} className='dialog'>
             <div className="recordingCon" style={{padding: 20, width: '280px'}}>
-                <h1 style={{fontSize: 30}}>Recording....</h1>
+                <h1 style={{fontSize: 30}}>
+                    {recording? 
+                     "Recording...."    
+                        :
+                    transcribing?
+                        "Transcribing"
+                        :
+                        ''
+                    }
+                </h1>
                 <button onClick={sendRecording}> <SendIcon/> </button>
             </div>
 
