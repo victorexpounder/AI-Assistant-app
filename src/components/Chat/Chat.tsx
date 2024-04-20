@@ -5,7 +5,7 @@ import axios from 'axios'
 import dotenv from 'dotenv'
 import SendIcon from '@mui/icons-material/Send';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import Recorder, { RecorderResult } from 'recorder-js';
+import Recorder from 'recorder-js';
 import { Button, Dialog, DialogActions } from '@mui/material'
 
 
@@ -48,10 +48,10 @@ const Chat = () => {
     
     
     
-    const sendMessage = async () => {
+    const sendMessage = async (passedMessage: string | null) => {
         const newMessage = {
             tag: "You",
-            message: message
+            message: passedMessage? passedMessage : message
         };
         
         // Update chatData with the new user message
@@ -117,12 +117,9 @@ const Chat = () => {
 
     const sendRecording = async () => {
         if (audioRecorder) {
+            
             await audioRecorder.stop().then(async ({ blob }) => {
-                const blobUrl = URL.createObjectURL(blob);
-                const url = blobUrl.substring(blobUrl.indexOf(':') + 1).trim();
                 
-                console.log(url);
-                setAudioBlobUrl(url); // Update the state with the URL
                 
                 // Release the media stream
                 if (mediaStreamRef.current) {
@@ -131,11 +128,14 @@ const Chat = () => {
                     });
                 }
                 setRecording(false);
+
+                
     
                 const formData = new FormData();
                 formData.append("providers", "openai");
                 formData.append('file', blob); // Append the audio blob to FormData
                 formData.append("language", "en");
+                formData.append("convert_to_wav", "true");
     
                 const toTextoptions = {
                     method: "POST",
@@ -154,9 +154,11 @@ const Chat = () => {
                 try {
                     settranscribing(true);
                     const res = await axios.request(toTextoptions);
+                    setMessage(res.data.results.openai.text) 
                     settranscribing(false);
+                    sendMessage(res.data.results.openai.text)
                     setOpenDialog(false);
-                    console.log(res.data);
+                    
                 } catch (error) {
                     console.log(error);
                     settranscribing(false);
@@ -202,7 +204,7 @@ const Chat = () => {
                     onChange={(e)=> setMessage(e.target.value)}
                     />
                     <button className='voice' onClick={()=>{startRecording();setOpenDialog(true)}}> <KeyboardVoiceIcon /> </button>
-                    <button onClick={()=>message? sendMessage() : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
+                    <button onClick={()=>message? sendMessage(null) : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
                 </div>
             </div>
         </div>
