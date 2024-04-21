@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 import SendIcon from '@mui/icons-material/Send';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import Recorder from 'recorder-js';
-import { Button, Dialog, DialogActions } from '@mui/material'
+import { Button, Dialog, DialogActions, Skeleton } from '@mui/material'
 
 
 interface Message {
@@ -190,7 +190,7 @@ const Chat = () => {
             }
 
             {loading &&
-                <p>loading....</p>
+                <Skeleton variant="text" sx={{ fontSize: '3rem' }} animation="wave" />
             }
             </div>
             <div className="inputCon">
@@ -209,8 +209,8 @@ const Chat = () => {
             </div>
         </div>
 
-        <Dialog open={openDialog} onClose={()=> setOpenDialog(false)} className='dialog'>
-            <div className="recordingCon" style={{padding: 20, width: '280px'}}>
+        <Dialog open={openDialog} onClose={()=> setOpenDialog(false)} >
+            <div className="recordingCon" style={{padding: 20, width: '280px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
                 <h1 style={{fontSize: 30}}>
                     {recording? 
                      "Recording...."    
@@ -221,7 +221,7 @@ const Chat = () => {
                         ''
                     }
                 </h1>
-                <button onClick={sendRecording}> <SendIcon/> </button>
+                <button onClick={sendRecording} style={{backgroundColor: "#191322", padding: 10, borderRadius: 50, color: "#fff"}}> <SendIcon/> </button>
             </div>
 
             <DialogActions>
