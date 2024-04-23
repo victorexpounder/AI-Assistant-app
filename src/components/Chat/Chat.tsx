@@ -49,7 +49,6 @@ const Chat = () => {
     
     
     const sendMessage = async (passedMessage: string | null) => {
-        
         const newMessage = {
             tag: "You",
             message: passedMessage? passedMessage : message
