@@ -49,7 +49,7 @@ const Chat = () => {
     
     
     const sendMessage = async (passedMessage: string | null) => {
-        console.log(process.env.NEXT_PUBLIC_API_KEY);
+        
         const newMessage = {
             tag: "You",
             message: passedMessage? passedMessage : message
