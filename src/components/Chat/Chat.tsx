@@ -28,27 +28,30 @@ const Chat = () => {
     // Reference to the media stream to release it later
     const mediaStreamRef = useRef<MediaStream | null>(null);
 
-    const options = {
-        method: "POST",
-        url: "https://api.edenai.run/v2/text/chat",
-        headers: {
-          authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
-        },
-        data: {
-          providers: "openai/gpt-3.5-turbo-0125",
-          text: message,
-          chatbot_global_action: "Act as an assistant",
-          previous_history: [],
-          temperature: 0.0,
-          max_tokens: 150,
-          fallback_providers: "",
-        },
-    };
+    
 
     
     
     
     const sendMessage = async (passedMessage: string | null) => {
+
+        const options = {
+            method: "POST",
+            url: "https://api.edenai.run/v2/text/chat",
+            headers: {
+              authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+            },
+            data: {
+              providers: "openai/gpt-3.5-turbo-0125",
+              text: passedMessage? passedMessage : message,
+              chatbot_global_action: "Act as an assistant",
+              previous_history: [],
+              temperature: 0.0,
+              max_tokens: 150,
+              fallback_providers: "",
+            },
+        };
+
         const newMessage = {
             tag: "You",
             message: passedMessage? passedMessage : message
