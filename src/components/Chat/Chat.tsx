@@ -57,7 +57,7 @@ const Chat = () => {
         // Update chatData with the new user message
         const newData = [...chatData, newMessage];
         setChatData(newData);
-    
+        setMessage('')
         try {
             setLoading(true);
             const response = await axios.request(options);
