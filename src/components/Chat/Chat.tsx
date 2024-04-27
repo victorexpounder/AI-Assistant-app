@@ -58,6 +58,7 @@ const Chat = () => {
         const newData = [...chatData, newMessage];
         setChatData(newData);
         setMessage('')
+    
         try {
             setLoading(true);
             const response = await axios.request(options);
@@ -216,17 +217,22 @@ const Chat = () => {
                      "Recording...."    
                         :
                     transcribing?
-                        "Transcribing"
+                        "Transcribing..."
                         :
                         ''
                     }
                 </h1>
-                <button onClick={sendRecording} style={{backgroundColor: "#191322", padding: 10, borderRadius: 50, color: "#fff"}}> <SendIcon/> </button>
-            </div>
 
-            <DialogActions>
-                <Button onClick={()=>{stopRecording(); setOpenDialog(false)}}>Cancel</Button>
-            </DialogActions>
+                {recording&&
+                    <button onClick={sendRecording} style={{backgroundColor: "#191322", padding: 10, borderRadius: 50, color: "#fff"}}> <SendIcon/> </button>
+                }
+            </div>
+            
+            {recording&&
+                <DialogActions>
+                    <Button onClick={()=>{stopRecording(); setOpenDialog(false)}}>Cancel</Button>
+                </DialogActions>
+            }
         </Dialog>
     </div>
   )
