@@ -48,7 +48,7 @@ const Chat = () => {
               previous_history: [],
               temperature: 0.0,
               max_tokens: 150,
-              fallback_providers: "",
+              
             },
         };
 
