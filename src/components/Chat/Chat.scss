@@ -1,7 +1,7 @@
 .chatCon{
     width: 100%;
     display: flex;
-    height: 100%;
+    flex: 14;
     align-items: center;
     justify-content: center;
     font-family: "Poppins", sans-serif;
@@ -9,10 +9,11 @@
         height: 100%;
         width: 50%;
         display: flex;
-        flex-direction: column;
+        flex-direction: column; 
+        position : relative;
         
         .chatbox{
-            flex: 4;
+            flex:  1;
             overflow-y: scroll;
             display: flex;
             flex-direction: column;
@@ -47,10 +48,10 @@
         }
     
         .inputCon{
-            flex: 1;
-            padding: 10px;
-            
-           
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 10px 10px 10px;
             
             .inputbox{
                 border-radius: 30px;
@@ -64,14 +65,7 @@
                     outline: none;
                     width: 100%;
                 }
-                input:focus {
-                   
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    z-index: 9999;
-                }
+                
                 .voice{
                     color: #ffffff52;
                     :hover{
@@ -86,6 +80,13 @@
                     
                     
                 }
+            }
+
+            p{
+                font-size: 13px;
+                font-weight: 200;
+                text-align: center;
+                color: #ffffffb2;
             }
         }
 

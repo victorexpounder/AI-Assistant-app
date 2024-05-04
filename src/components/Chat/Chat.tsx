@@ -210,6 +210,7 @@ const Chat = () => {
                     <button className='voice' onClick={()=>{startRecording();setOpenDialog(true)}}> <KeyboardVoiceIcon /> </button>
                     <button onClick={()=>message? sendMessage(null) : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
                 </div>
+                <p>created for testing purposes Eze Victor @ 2024</p>
             </div>
         </div>
 
