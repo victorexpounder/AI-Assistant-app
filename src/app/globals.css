@@ -17,13 +17,11 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: #ffff;
+  background-color: #191322;
+  min-height: calc(100vh - constant(safe-area-inset-bottom));
+  min-height: calc(100vh - env(safe-area-inset-bottom));
+  
 }
 
 @layer utilities {
