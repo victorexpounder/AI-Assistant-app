@@ -171,13 +171,25 @@ const Chat = () => {
             });
         }
     };
-    
-    
+
+    const submitMessage = (e: any) => {
+        e.preventDefault();
+        if(message){
+        sendMessage(null);
+        }
+    }
+
+    const handleKeyDown = (e: any) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault(); // Prevents a new line
+          submitMessage(e) // Calls the submit function
+        }
+    };
 
   return (
     <div className='chatCon'>
         <div className="chat">
-            <div className={`chatbox ${chatData.length < 1? 'center' : ''}`}>
+            <div className={`chatbox ${chatData.length < 1? 'center' : ''} h-10 overflow-y-scroll`}>
             {chatData?.map((chat, index)=>(
                 <div className="messageBox" key={index}>
                     <h1> {chat.tag} </h1>
@@ -197,18 +209,21 @@ const Chat = () => {
                 <Skeleton variant="text" sx={{ fontSize: '3rem' }} animation="wave" />
             }
             </div>
-            <div className="inputCon">
+            <div className="inputCon ">
                 <div className="inputbox">
-                    <textarea 
-                    className='input' 
-                    placeholder='Ask ChatMu' 
-                    draggable={false} 
-                    rows={1} 
-                    value={message}
-                    onChange={(e)=> setMessage(e.target.value)}
-                    />
+                    <form className='w-full' action="" onSubmit={submitMessage}>
+                        <textarea 
+                        className='input' 
+                        placeholder='Ask ChatMu' 
+                        draggable={false} 
+                        rows={1} 
+                        value={message}
+                        onKeyDown={handleKeyDown}
+                        onChange={(e)=> setMessage(e.target.value)}
+                        />
+                    </form>
                     <button className='voice' onClick={()=>{startRecording();setOpenDialog(true)}}> <KeyboardVoiceIcon /> </button>
-                    <button onClick={()=>message? sendMessage(null) : ''} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
+                    <button onClick={submitMessage} className={`send ${message? 'active' : ''}`} > <SendIcon /> </button>
                 </div>
                 <p>created for testing purposes Eze Victor @ 2024</p>
             </div>
