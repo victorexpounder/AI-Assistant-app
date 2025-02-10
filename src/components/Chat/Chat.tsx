@@ -30,7 +30,7 @@ const Chat = () => {
 
     
 
-    
+   
     
     
     const sendMessage = async (passedMessage: string | null) => {
@@ -42,7 +42,7 @@ const Chat = () => {
               authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
             },
             data: {
-              providers: "openai/gpt-3.5-turbo-0125",
+              providers: "openai/gpt-4",
               text: passedMessage? passedMessage : message,
               chatbot_global_action: "Act as an assistant",
               previous_history: [],
@@ -66,7 +66,7 @@ const Chat = () => {
             setLoading(true);
             const response = await axios.request(options);
             const data = response.data;
-            const generatedText = data['openai/gpt-3.5-turbo-0125'].generated_text;
+            const generatedText = data['openai/gpt-4'].generated_text;
             
             // Update chatData with the AI message
             const aiMessage = {
@@ -229,6 +229,7 @@ const Chat = () => {
 
                 {recording&&
                     <button onClick={sendRecording} style={{backgroundColor: "#191322", padding: 10, borderRadius: 50, color: "#fff"}}> <SendIcon/> </button>
+                    
                 }
             </div>
             
